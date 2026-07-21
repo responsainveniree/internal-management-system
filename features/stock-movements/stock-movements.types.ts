@@ -55,3 +55,6 @@ export const MOVEMENT_TYPE_BY_TARGET: Record<TargetStockType, MovementType> = {
 export type ItemOption = { id: string; name: string };
 export type LocationOption = { id: string; name: string };
 export type MovementTypeOption = StockMovementCreateSchema["stockMovementType"];
+
+// needed for ItemInfoPanel, for creating global stock or allocate stock
+export type StockMovementFormOpenType = "GLOBAL_STOCK" | "ALLOCATE_STOCK";

@@ -73,6 +73,7 @@ export async function createOrdersSeed(
       await prisma.stockMovement.create({
         data: {
           itemId: items[oi.itemName].id,
+          itemName: items[oi.itemName].name,
           type: MovementType.SALE,
           quantity: oi.quantity,
           totalCost: oi.quantity * oi.priceAtSale,

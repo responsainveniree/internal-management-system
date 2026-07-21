@@ -1,12 +1,10 @@
 "use client";
 
 import Image from "next/image";
-import { Info, Pencil, PowerIcon, PowerOff, Trash2 } from "lucide-react";
+import { Info, Pencil, PowerIcon, PowerOff } from "lucide-react";
 import type { Item } from "@/features/items/item.types";
 import { cn } from "@/shared/lib/utils";
 import { formatItemDate, formatItemPrice } from "@/shared/lib/formatter";
-import { useSession } from "next-auth/react";
-import { canDeleteItem } from "@/shared/lib/validations/user-access-validation";
 
 type TableRowProps = {
   item: Item;
@@ -23,8 +21,6 @@ export default function TableRow({
   onStatusChange,
   onDelete,
 }: TableRowProps) {
-  const { data } = useSession();
-
   const categoryLabel = item.category?.name ?? "General";
 
   return (
@@ -149,7 +145,8 @@ export default function TableRow({
             </button>
           )}
 
-          {!item.isActive &&
+          {/* Turn off delete feature for a while, can be re-activated in the future  */}
+          {/* {!item.isActive &&
             data?.user.role &&
             canDeleteItem(data?.user.role) && (
               <button
@@ -169,7 +166,7 @@ export default function TableRow({
               >
                 <Trash2 className="size-4" strokeWidth={1.5} />
               </button>
-            )}
+            )} */}
         </div>
       </td>
     </tr>

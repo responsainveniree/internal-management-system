@@ -12,12 +12,14 @@ export const stockMovementCreateSchema = z
   .object({
     itemId: z.string().trim().min(1),
     stockId: z.string().trim().min(1).optional(),
+    isGlobalStock: z.coerce.boolean().optional(),
     stockMovementType: stockMovementTypeEnum,
     quantity: z.number().int(),
     totalCost: z.number().int().optional(),
     reason: z.string().trim().min(10),
     destinationLocationId: z.string().trim().min(1).optional(),
     orderId: z.string().trim().min(1).optional(),
+    expiredAt: z.coerce.date().optional(),
   })
   .superRefine((val, ctx) => {
     const TYPES_REQUIRING_DESTINATION: MovementType[] = ["TRANSFER"];
@@ -55,16 +57,6 @@ export const stockMovementCreateSchema = z
           message:
             "Total cost field must be filled or total cost must be greater than 0",
           path: ["totalCost"],
-        });
-      }
-    }
-
-    if (val.stockMovementType === "TRANSFER") {
-      if (!val.destinationLocationId) {
-        ctx.addIssue({
-          code: "custom",
-          message: "Destination location field must be filled",
-          path: ["destinationLocationId"],
         });
       }
     }

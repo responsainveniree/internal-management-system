@@ -2,21 +2,29 @@ import stockService from "@/features/stocks/stock.service";
 import {
   stockRepository,
   stockSelectData,
-  stockWhereUniqueInput,
+  stockWhereInput,
 } from "@/features/stocks/stock.repository";
 import { notFound } from "@/shared/lib/error-handlers";
 import { PrismaClient } from "@prisma/client";
 import { Session } from "next-auth";
 import { mockDeep, mockReset } from "jest-mock-extended";
+import { StockGetByIdSchema } from "@/shared/lib/zods/stock.zod";
+import stockMovementsRepository from "@/features/stock-movements/stock-movements.repository";
 
 jest.mock("@/features/stocks/stock.repository");
+jest.mock("@/features/stock-movements/stock-movements.repository");
 
 const mockedStockRepository = stockRepository as jest.Mocked<
   typeof stockRepository
 >;
 
-const mockedStockWhereUniqueInput =
-  stockWhereUniqueInput as jest.MockedFunction<typeof stockWhereUniqueInput>;
+const mockedStockMovementRepository = stockMovementsRepository as jest.Mocked<
+  typeof stockMovementsRepository
+>;
+
+const mockedStockWhereInput = stockWhereInput as jest.MockedFunction<
+  typeof stockWhereInput
+>;
 
 const mockedSelectDataStock = stockSelectData as jest.MockedFunction<
   typeof stockSelectData
@@ -46,89 +54,60 @@ describe("stockService.getById", () => {
       creator: { id: "user-1", name: "Alice" },
     };
 
-    mockedStockRepository.get.mockResolvedValue(stockMock as any);
+    mockedStockRepository.getById.mockResolvedValue(stockMock as any);
 
-    mockedStockWhereUniqueInput.mockReturnValue({ id: "stock-1" });
+    mockedStockWhereInput.mockReturnValue({ id: "stock-1" });
 
-    mockedSelectDataStock.mockReturnValue({
-      id: true,
-      quantity: true,
-      type: true,
-      expiredAt: true,
-      itemId: true,
-      locationId: true,
-      createdAt: true,
-      updatedAt: true,
-      item: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      location: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-      creator: {
-        select: {
-          id: true,
-          name: true,
-        },
-      },
-    });
+    mockedSelectDataStock.mockReturnValue({});
+
+    mockedStockMovementRepository.countRows.mockResolvedValue(1 as any);
+
+    const params: StockGetByIdSchema = {
+      page: 1,
+      dataPerPage: 10,
+      sortOrder: "asc",
+      sortBy: "createdAt",
+    };
 
     const result = await stockService.getById(
       fakeSession,
       "stock-1",
+      params,
       prismaMock,
     );
 
-    expect(mockedStockRepository.get).toHaveBeenCalledWith(
+    expect(mockedStockRepository.getById).toHaveBeenCalledWith(
       { id: "stock-1" },
-      {
-        id: true,
-        quantity: true,
-        type: true,
-        expiredAt: true,
-        itemId: true,
-        locationId: true,
-        createdAt: true,
-        updatedAt: true,
-        item: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        location: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-        creator: {
-          select: {
-            id: true,
-            name: true,
-          },
-        },
-      },
+      {},
       prismaMock,
     );
 
     expect(result).toEqual({
       message: "Stock retrieved successfully",
-      data: stockMock,
+      data: {
+        movementsCount: 1,
+        stock: stockMock,
+      },
     });
   });
 
   it("throws notFound when stock does not exist", async () => {
-    mockedStockRepository.get.mockResolvedValue(null);
+    mockedStockRepository.getById.mockResolvedValue(null);
+
+    const params: StockGetByIdSchema = {
+      page: 1,
+      dataPerPage: 10,
+      sortOrder: "asc",
+      sortBy: "createdAt",
+    };
 
     await expect(
-      stockService.getById(fakeSession, "nonexistent-stock", prismaMock),
+      stockService.getById(
+        fakeSession,
+        "nonexistent-stock",
+        params,
+        prismaMock,
+      ),
     ).rejects.toEqual(notFound("Stock not found"));
   });
 });

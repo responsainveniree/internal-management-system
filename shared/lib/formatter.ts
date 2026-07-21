@@ -24,13 +24,31 @@ export function formatItemDate(value: Date | string) {
 
 // change "1000000" into "10.000.000"
 export const formatThousand = (value: string | number): string => {
-  if (!value) return "";
-  const numString = value.toString().replace(/\D/g, ""); // Hapus semua karakter non-angka
-  return new Intl.NumberFormat("id-ID").format(Number(numString));
+  // Return empty string if value is null, undefined, or empty
+  if (value === undefined || value === null || value === "") return "";
+
+  const stringValue = value.toString();
+
+  // Check if the value starts with or contains a negative sign
+  const isNegative = stringValue.startsWith("-");
+
+  // Strip everything that is not a digit
+  const cleanDigits = stringValue.replace(/\D/g, "");
+
+  // If no digits remain after stripping, return an empty string or just the minus sign
+  if (!cleanDigits) return isNegative ? "-" : "";
+
+  // Format the absolute numeric value using the Indonesian locale
+  const formattedNumber = new Intl.NumberFormat("id-ID").format(
+    Number(cleanDigits),
+  );
+
+  // Re-attach the negative sign if it was present
+  return isNegative ? `-${formattedNumber}` : formattedNumber;
 };
 
 // change "10.000.000" into 10000000 for database
 export const unformatThousand = (value: string): number => {
   if (!value) return 0;
-  return Number(value.replace(/\./g, "")); // Hapus semua titik
+  return Number(value.replace(/\./g, "")); // Deleting all the "."
 };

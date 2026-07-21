@@ -150,6 +150,7 @@ export async function createStockMovementsSeed(
     await prisma.stockMovement.create({
       data: {
         itemId: item.id,
+        itemName: item.name,
         type: mv.type,
         quantity: mv.quantity,
         reason: mv.reason,

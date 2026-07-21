@@ -1,4 +1,7 @@
-import { StockGetManySchema } from "@/shared/lib/zods/stock.zod";
+import {
+  StockGetByIdSchema,
+  StockGetManySchema,
+} from "@/shared/lib/zods/stock.zod";
 
 const STOCK_KEYS = {
   all: ["stocks"] as const,
@@ -6,7 +9,7 @@ const STOCK_KEYS = {
   list: (filters: StockGetManySchema) =>
     [...STOCK_KEYS.lists(), { filters }] as const,
   details: () => [...STOCK_KEYS.all, "detail"] as const,
-  detail: (id: string, filters?: StockGetManySchema) =>
+  detail: (id: string, filters?: StockGetByIdSchema) =>
     [...STOCK_KEYS.details(), id, ...(filters ? [{ filters }] : [])] as const,
 };
 

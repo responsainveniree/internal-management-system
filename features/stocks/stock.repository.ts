@@ -87,7 +87,7 @@ export const stockRepository = {
       ...(sortBy === "stockType"
         ? {
             orderBy: {
-              type: sortOrder,
+              quantity: sortOrder,
             },
           }
         : {
@@ -98,12 +98,12 @@ export const stockRepository = {
     });
   },
 
-  get: async <T extends Prisma.StockSelect>(
-    where: Prisma.StockWhereUniqueInput,
+  getById: async <T extends Prisma.StockSelect>(
+    where: Prisma.StockWhereInput,
     select: T,
     tx: PrismaClient | Prisma.TransactionClient,
   ) => {
-    return tx.stock.findUnique({
+    return tx.stock.findFirst({
       where,
       select,
     });

@@ -9,7 +9,7 @@ This project is an internal hotel management system designed to be extended into
 - **Framework:** Next.js (App Router)
 - **Language:** TypeScript (Strict Mode required)
 - **Database & ORM:** PostgreSQL running with Prisma ORM
-- **Styling & UI:** Tailwind CSS combined with shadcn/ui components
+- **Styling & UI:** Tailwind CSS combined with shadcn/ui components. Always use shadcn element if there's already installed.
 - **State Management & Fetching:** React Server Components (RSC), TanStack Query, and Zod for schema validation
 - **Testing:** Playwright for end-to-end testing and jest for unit tests. For unit test use jest-extended-mock for mocking.
 

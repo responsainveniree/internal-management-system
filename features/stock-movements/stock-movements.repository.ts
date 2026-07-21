@@ -8,6 +8,17 @@ export const createSelectStockMovementData = <
 ): T => select;
 
 const stockMovementsRepository = {
+  findOne: async (
+    where: Prisma.StockMovementWhereInput,
+    select: Prisma.StockMovementSelect,
+    tx: Prisma.TransactionClient | PrismaClient,
+  ) => {
+    return tx.stockMovement.findFirst({
+      where,
+      select,
+    });
+  },
+
   create: async (
     data: Prisma.StockMovementUncheckedCreateInput,
     tx: PrismaClient | Prisma.TransactionClient,

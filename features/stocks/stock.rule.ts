@@ -11,6 +11,7 @@ export const STOCK_QUERYABLE_STATUSES: StockType[] = [
   "READY",
   "DAMAGED",
   "DIRTY",
+  "LOST",
 ] as const;
 export type StockQueryableStatus = (typeof STOCK_QUERYABLE_STATUSES)[number];
 

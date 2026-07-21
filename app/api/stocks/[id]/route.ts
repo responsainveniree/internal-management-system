@@ -4,14 +4,17 @@ import {
   StockGetByIdApiResponse,
 } from "@/features/stocks/stock.types";
 import prisma from "@/shared/db/prisma";
-import { forbidden } from "@/shared/lib/error-handlers";
+import { badRequest, forbidden } from "@/shared/lib/error-handlers";
 import {
   handleError,
   printConsoleError,
 } from "@/shared/lib/error-handlers/handleError";
 import { canManageStock } from "@/shared/lib/validations/user-access-validation";
 import sessionValidation from "@/shared/lib/validations/user-session-validation";
-import { stockUpdateSchema } from "@/shared/lib/zods/stock.zod";
+import {
+  stockGetByIdSchema,
+  stockUpdateSchema,
+} from "@/shared/lib/zods/stock.zod";
 
 export async function DELETE(
   req: Request,
@@ -56,7 +59,21 @@ export async function GET(
 
     const { id } = await params;
 
-    const result = await stockService.getById(session, id, prisma);
+    if (!id)
+      throw badRequest(
+        "Stock id is missing. Something went wrong. Try it again later.",
+      );
+
+    const { searchParams } = new URL(req.url);
+    const rawSchemaParams = Object.fromEntries(searchParams.entries());
+    const schemaParams = stockGetByIdSchema.parse(rawSchemaParams);
+
+    const result = await stockService.getById(
+      session,
+      id,
+      schemaParams,
+      prisma,
+    );
 
     const response: StockGetByIdApiResponse = {
       message: result.message,

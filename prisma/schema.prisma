@@ -249,8 +249,9 @@ model StockMovement {
   type      MovementType
   reason    String
 
-  itemId String
-  item   Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
+  itemId   String
+  itemName String
+  item     Item   @relation(fields: [itemId], references: [id], onDelete: Cascade)
 
   sourceLocationId      String?
   sourceLocation        Location? @relation("Source", fields: [sourceLocationId], references: [id])

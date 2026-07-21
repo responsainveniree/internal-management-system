@@ -92,8 +92,35 @@
   - Leverages `jest-mock-extended` for strict type-safe mocking of database transaction client (`PrismaClient`) and nested models without actual database connections
   - `getById` test uses a custom `jest.mock` factory with `jest.requireActual` to preserve `createSelectItemData`/`createIncludeItemData` named exports as real identity functions while still auto-mocking all repository methods
 
-
 ## Stock Feature
+
+### Stock Feature Development
+
+- Created repository layer at `features/stocks/stock.repository.ts`
+  - CRUD operations: `create`, `findById`, `findFirst`, `findOrUpdateOrCreate`, `getMany`, `get`, `update`, `delete`
+  - Type-safe helpers: `stockWhereInput`, `stockWhereUniqueInput`, `stockSelectData`
+  - Clause builders: `buildStockWhereClause` (location-based stock filter checking search queries and status categories: queryable, expired, expiring soon) and `buildStockCountWhereClause`
+  - Aggregations: `countQuantity` (sum of quantity), `getGroupedStockQuantities` (groupBy itemId/type), and `countRows` (row count)
+- Created service layer at `features/stocks/stock.service.ts`
+  - Create: Under database transaction, checks item and location existence. If stock with matching item, location, type, and expiration date already exists, increments its quantity; otherwise creates new stock. Also creates a `RECEIVE` movement history and logs a `CREATE` audit log under the `STOCK` entity.
+  - GetById: Retrieves stock with item, location, and creator details using type-safe select.
+  - GetMany: Builds where query from filters (searchQuery, type, locationId, itemId), returns paginated stocks with total count.
+  - Update: Under transaction, checks unique constraint conflict via rules, validates location, updates type, expiration, and location, logging an `UPDATE` audit log.
+  - Delete: Under transaction, checks `checkCanDeleteStock` rule, deletes, and logs a `DELETE` audit log.
+- Created rule layer at `features/stocks/stock.rule.ts`
+  - Pure business rules defining queryable stock statuses (`READY`, `DAMAGED`, `DIRTY`).
+  - Configurable expiration window days (via environment variable `EXPIRING_WINDOW_DAYS` or fallback defaults).
+  - Status filter descriptors mapping to query kinds (`exactType`, `expiredBefore`, `expiringWithinWindow`).
+  - Deletion rule `checkCanDeleteStock` blocks deletion of stocks with movement history.
+  - Update rule `checkCanUpdateStock` prevents conflicts with existing records having same item, location, type, and expiration.
+- Created client-side API layer at `features/stocks/stock.api.ts`
+  - Network wrapper for REST client endpoints (`getById`, `getMany`, `create`, `delete`, and `update` via patch).
+- Created React hooks at `features/stocks/stock.hooks.ts`
+  - TanStack Query hooks (`useStocks`, `useStockById`, `useCreateStock`, `useUpdateStock`, and `useDeleteStock`) with caching and invalidation using keys in `stock.keys.ts` and `item.keys.ts`.
+- Created frontend components inside `features/stocks/components/`
+  - Main management layout `StockManagement.tsx` supporting filtering (search, type, location, item), sorting, pagination, and action dialog triggers.
+  - Modal dialogues: `StockFormDialog.tsx` for creation/editing, and `StockDeleteModal.tsx` for deleting stock rows.
+  - Custom tables: `stock-table` (including `TableHeader.tsx`, `TableRow.tsx`, and index) with search, sort, and pagination selectors.
 
 ### Stock Feature Testing
 
@@ -107,14 +134,31 @@
 ### Stock Movements Feature Development
 
 - Created repository layer at `features/stock-movements/stock-movements.repository.ts`
-  - CRUD operations: create, getById, getMany, count, update, delete
-  - Helper function for type-safe select queries
+  - CRUD operations: `create`, `getById`, `getMany` (with sorting on item name, creation date, type, destination location, source location), `countRows`, `countQuantity`, `update`, `delete`
+  - Helper function `createSelectStockMovementData` for type-safe select queries
 - Created service layer at `features/stock-movements/stock-movements.service.ts`
-  - Create: Validates data, checks related entities (item, stock, locations, order), type-specific validations
-  - Get operations: getById and getMany with search and filtering
-  - Update: Updates movement reason with audit logging
-  - Delete: Deletes movement with audit logging
-  - All operations include session validation, role-based access control, and audit logging
+  - Create: Under transaction, checks dependencies (item, stock, destination location, order).
+    - Checks rule that movement types requiring stock row (TRANSFER, ADJUSTMENT, MARK_AS_DAMAGED, MARK_AS_DIRTY, etc.) must have `stockId` provided.
+    - Rule: `LAUNDRY_IN` can only target stocks of type `READY`.
+    - Handles movement types:
+      - `RECEIVE` (creates global intake when `stockId` is null, or increments quantity of existing stock).
+      - `TRANSFER` (moves stock between locations, validates destination is different and source has sufficient stock, updates source/creates or updates destination stock).
+      - `ADJUSTMENT` (increments/decrements stock quantity, checks for sufficient stock).
+      - `MARK_AS_DAMAGED`, `MARK_AS_DIRTY`, `MARK_AS_LOST`, `MARK_AS_EXPIRED` (uses `markStockAs` helper).
+      - `DISCARD`, `LAUNDRY_OUT`, `CONSUME`, `SALE` (decrements stock quantity, checks for sufficiency).
+    - Logs a `CREATE` audit log under `STOCK_MOVEMENT` entity.
+  - GetById: Validates role/permission (`canManageItem`), retrieves full movement details.
+  - GetMany: Validates role, filters by searchQuery (item name or reason), type, source/destination location, and returns paginated records with total count.
+  - Update: Validates role, updates reason in transaction and logs an `UPDATE` audit log.
+  - Delete: Comments out the delete operation (regular deletion disabled / not implemented).
+- Created client-side API layer at `features/stock-movements/stock-movements.api.ts`
+  - Handles client-side REST endpoint calls for `getById`, `getMany`, `create`, and `update` (using JSON request body for update REST endpoint).
+- Created React hooks at `features/stock-movements/stock-movements.hooks.ts`
+  - TanStack Query hooks (`useStockMovementsHooks`, `useStockMovement`, `useCreateStockMovement`, `useUpdateStockMovement`) with query cache invalidation on lists, detail keys, item details, and stock lists.
+- Created frontend components inside `features/stock-movements/components/`
+  - Main management layout `StockMovementManagement.tsx` supporting filtering (by search, type, source location, destination location), sorting, pagination, and details/form modal triggers.
+  - Form and info dialogues: `StockMovementFormDialog.tsx` for creating/recording movements, and `StockMovementInfoDialog.tsx` for viewing details.
+  - Custom tables: `stock-movement-table` (including `TableHeader.tsx`, `TableRow.tsx`, and index) with sorting, filtering, and page selectors.
 
 ### Stock Movements Testing
 
@@ -122,14 +166,10 @@
 - Removed non-existent functionality (quick actions, complex stock manipulation)
 - Aligned with actual API endpoints and schema field names
 - Test coverage: Create (RECEIVE), Get list, Get by ID, Update, and error cases
-- Note: Delete functionality not implemented per feature-notes.md
-
-
+- Note: Delete functionality not implemented
 
 ## Notes
 
-- Stock movement feature does not have delete functionality (per feature-notes.md)
-- Update endpoints pass resource ID in request body (inconsistent with REST pattern at stock feature)
-- Create/update/delete endpoints return null as data, requiring additional requests to get IDs (At stock feature)
+- Stock movement feature does not have delete functionality
 - Integration testing is still not really important for now
-- Probably several search feature is not working if the sortBy isn't by name
+- Item delete feature is turned off

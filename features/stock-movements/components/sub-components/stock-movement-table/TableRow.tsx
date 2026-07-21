@@ -4,6 +4,7 @@ import { Eye } from "lucide-react";
 import type { StockMovementGetManyApiResponse } from "@/features/stock-movements/stock-movements.types";
 import { formatItemDate, formatItemPrice } from "@/shared/lib/formatter";
 import { cn } from "@/shared/lib/utils";
+import { movementTone } from "@/features/stock-movements/stock-movements.style";
 
 type StockMovementRow =
   StockMovementGetManyApiResponse["data"]["movements"][number];
@@ -11,21 +12,6 @@ type StockMovementRow =
 type TableRowProps = {
   movement: StockMovementRow;
   onInfo: (movementId: string) => void;
-};
-
-const movementTone: Record<string, string> = {
-  RECEIVE: "border-emerald-500/40 bg-emerald-50 text-emerald-800",
-  TRANSFER: "border-sky-500/40 bg-sky-50 text-sky-800",
-  CONSUME: "border-amber-500/40 bg-amber-50 text-amber-800",
-  SALE: "border-violet-500/40 bg-violet-50 text-violet-800",
-  DISCARD: "border-rose-500/40 bg-rose-50 text-rose-800",
-  LAUNDRY_OUT: "border-indigo-500/40 bg-indigo-50 text-indigo-800",
-  LAUNDRY_IN: "border-cyan-500/40 bg-cyan-50 text-cyan-800",
-  ADJUSTMENT: "border-[#894d0d]/40 bg-[#894d0d]/10 text-[#894d0d]",
-  MARK_AS_DAMAGED: "border-red-500/40 bg-red-50 text-red-800",
-  MARK_AS_DIRTY: "border-stone-500/40 bg-stone-50 text-stone-800",
-  MARK_AS_LOST: "border-zinc-500/40 bg-zinc-50 text-zinc-800",
-  MARK_AS_EXPIRED: "border-orange-500/40 bg-orange-50 text-orange-800",
 };
 
 function formatMovementType(value: string) {
@@ -48,7 +34,7 @@ export default function TableRow({ movement, onInfo }: TableRowProps) {
       <td className="px-4 py-3 align-middle">
         <div className="min-w-0">
           <p className="truncate font-ochre-ui text-sm font-semibold text-[#121c28]">
-            {movement.item?.name ?? "Unknown item"}
+            {movement.itemName ?? "Unknown item"}
           </p>
         </div>
       </td>

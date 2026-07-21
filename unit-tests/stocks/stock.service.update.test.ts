@@ -52,7 +52,7 @@ describe("stockService.update", () => {
       itemId: "item-1",
     };
 
-    mockedStockRepository.get.mockResolvedValue(existingStock as any);
+    mockedStockRepository.getById.mockResolvedValue(existingStock as any);
     prismaMock.stock.findFirst.mockResolvedValue(null); // no conflict
     mockedLocationRepository.findById.mockResolvedValue({
       id: "loc-2",
@@ -133,7 +133,7 @@ describe("stockService.update", () => {
     // A different stock already occupies the target location/type/expiredAt combo
     const conflictingStock = { id: "conflicting-stock-1" };
 
-    mockedStockRepository.get.mockResolvedValue(existingStock as any);
+    mockedStockRepository.getById.mockResolvedValue(existingStock as any);
     prismaMock.stock.findFirst.mockResolvedValue(conflictingStock as any);
 
     const expiredDate = new Date();
@@ -168,7 +168,7 @@ describe("stockService.update", () => {
       callback(prismaMock),
     );
 
-    mockedStockRepository.get.mockResolvedValue(null);
+    mockedStockRepository.getById.mockResolvedValue(null);
 
     const expiredDate = new Date();
 
@@ -198,7 +198,7 @@ describe("stockService.update", () => {
       callback(prismaMock),
     );
 
-    mockedStockRepository.get.mockResolvedValue({
+    mockedStockRepository.getById.mockResolvedValue({
       quantity: 5,
       type: "READY",
       expiredAt: null,
@@ -231,7 +231,7 @@ describe("stockService.update", () => {
       callback(prismaMock),
     );
 
-    mockedStockRepository.get.mockResolvedValue({
+    mockedStockRepository.getById.mockResolvedValue({
       quantity: 5,
       type: "READY",
       expiredAt: null,

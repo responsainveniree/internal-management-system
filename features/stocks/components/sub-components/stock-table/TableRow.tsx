@@ -1,6 +1,6 @@
 "use client";
 
-import { Pencil, Trash2 } from "lucide-react";
+import { Info, Pencil, Trash2 } from "lucide-react";
 import type { Stock, StockDelete } from "@/features/stocks/stock.types";
 import { cn } from "@/shared/lib/utils";
 import { formatItemDate } from "@/shared/lib/formatter";
@@ -19,6 +19,7 @@ type TableRowProps = {
   stock: Stock;
   onEdit: (stock: Stock) => void;
   onDelete: (stock: StockDelete) => void;
+  onInfo: (stockId: string) => void;
 };
 
 export default function TableRow({
@@ -26,6 +27,7 @@ export default function TableRow({
   stock,
   onEdit,
   onDelete,
+  onInfo,
 }: TableRowProps) {
   const { data } = useSession();
 
@@ -80,6 +82,22 @@ export default function TableRow({
       {/* Actions */}
       <td className="px-4 py-3 align-middle text-end">
         <div className="inline-flex items-center gap-1">
+          <button
+            type="button"
+            onClick={() => onInfo(stock.id)}
+            className={cn(
+              "rounded-md p-2 outline-none inline-flex items-center justify-center transition-all duration-200 ease-out",
+              "bg-transparent text-[#565e74]",
+              "hover:-translate-y-0.5 active:translate-y-0",
+              "hover:shadow-[0_8px_16px_-6px_rgba(15,23,42,0.08)]",
+              "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#894d0d]",
+              "hover:bg-[#e5eeff] hover:text-[#121c28]",
+            )}
+            aria-label={`View details for stock of ${stock.item.name}`}
+          >
+            <Info className="size-4" strokeWidth={1.5} />
+          </button>
+
           <button
             type="button"
             onClick={() => onEdit(stock)}

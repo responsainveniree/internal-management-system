@@ -40,7 +40,7 @@ export const stockSortByEnum = z.enum([
 // For specific stock information, that return stock movement as one of the data
 export const stockSpecificSortByEnum = z.enum(["createdAt", "type"]);
 
-export const stockMovementTypeEnum = z.enum(Object.values(MovementType));
+export const stockMovementTypeEnum = z.enum([...Object.values(MovementType)]);
 export const stockMovementSortByEnum = z.enum([
   "name",
   "createdAt",

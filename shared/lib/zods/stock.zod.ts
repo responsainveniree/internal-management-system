@@ -52,15 +52,15 @@ export const stockGetManySchema = z.object({
 
 export type StockGetManySchema = z.infer<typeof stockGetManySchema>;
 
-export const stockGetSpecificSchema = z.object({
+export const stockGetByIdSchema = z.object({
   page: page,
   dataPerPage: dataPerPage,
   sortOrder: sortOrderEnum,
   sortBy: stockSpecificSortByEnum.default("createdAt"),
-  stockMovementType: stockMovementTypeEnum,
+  stockMovementType: stockMovementTypeEnum.optional(),
 });
 
-export type StockGetSpecificSchema = z.infer<typeof stockGetSpecificSchema>;
+export type StockGetByIdSchema = z.infer<typeof stockGetByIdSchema>;
 
 export const stockUpdateSchema = z.object({
   type: stockEnum,

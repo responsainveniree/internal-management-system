@@ -6,13 +6,16 @@ import {
 } from "./stock.types";
 import {
   StockCreateSchema,
+  StockGetByIdSchema,
   StockGetManySchema,
   StockUpdateSchema,
 } from "@/shared/lib/zods/stock.zod";
 
 const stockApi = {
-  getById: async (stockId: string) => {
-    const result = await api.get<StockGetByIdApiResponse>("/stocks/" + stockId);
+  getById: async (stockId: string, params?: StockGetByIdSchema) => {
+    const result = await api.get<StockGetByIdApiResponse>("/stocks/" + stockId, {
+      params,
+    });
     return result.data;
   },
 

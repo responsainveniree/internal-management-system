@@ -85,34 +85,34 @@ export async function PATCH(
   }
 }
 
-export async function DELETE(
-  request: Request,
-  { params }: { params: Promise<{ id: string }> },
-) {
-  try {
-    const session = await sessionValidation();
+// export async function DELETE(
+//   request: Request,
+//   { params }: { params: Promise<{ id: string }> },
+// ) {
+//   try {
+//     const session = await sessionValidation();
 
-    if (!canManageItem(session.role)) {
-      throw forbidden("You're not allowed to access this feature");
-    }
+//     if (!canManageItem(session.role)) {
+//       throw forbidden("You're not allowed to access this feature");
+//     }
 
-    const { id } = await params;
+//     const { id } = await params;
 
-    const result = await itemService.delete(session, id, prisma);
+//     const result = await itemService.delete(session, id, prisma);
 
-    const response: ItemCUDApiResponse = {
-      message: result.message,
-      data: {
-        id: result.id,
-      },
-      status: 200,
-    };
+//     const response: ItemCUDApiResponse = {
+//       message: result.message,
+//       data: {
+//         id: result.id,
+//       },
+//       status: 200,
+//     };
 
-    return Response.json(response, {
-      status: response.status,
-    });
-  } catch (error) {
-    printConsoleError(error, "DELETE", request.url);
-    return handleError(error);
-  }
-}
+//     return Response.json(response, {
+//       status: response.status,
+//     });
+//   } catch (error) {
+//     printConsoleError(error, "DELETE", request.url);
+//     return handleError(error);
+//   }
+// }

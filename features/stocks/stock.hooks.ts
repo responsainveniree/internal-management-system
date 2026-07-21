@@ -7,6 +7,7 @@ import {
 import stockApi from "./stock.api";
 import {
   StockCreateSchema,
+  StockGetByIdSchema,
   StockGetManySchema,
   StockUpdateSchema,
 } from "@/shared/lib/zods/stock.zod";
@@ -32,11 +33,13 @@ export const useStocks = (
 
 export const useStockById = (
   stockId: string,
-  optional: Partial<UseQueryOptions<StockGetByIdApiResponse>>,
+  params: StockGetByIdSchema,
+  optional?: Partial<UseQueryOptions<StockGetByIdApiResponse>>,
 ) => {
   return useQuery({
-    queryKey: STOCK_KEYS.detail(stockId),
-    queryFn: () => stockApi.getById(stockId),
+    queryKey: STOCK_KEYS.detail(stockId, params),
+    queryFn: () => stockApi.getById(stockId, params),
+    enabled: Boolean(stockId),
     staleTime: 1000 * 60 * 5, // 5 minutes
     ...optional,
   });

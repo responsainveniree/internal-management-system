@@ -13,6 +13,7 @@ import StockFormDialog from "./sub-components/StockFormDialog";
 import StockDeleteModal from "./sub-components/StockDeleteModal";
 import { StockGetManySchema } from "@/shared/lib/zods/stock.zod";
 import StockTable, { StockTableFilters } from "./sub-components/stock-table";
+import StockInfoPanel from "./sub-components/stock-table/StockInfoPanel";
 
 type LocationOption = { id: string; name: string };
 type ItemOption = { id: string; name: string };
@@ -45,6 +46,7 @@ export default function StockManagement({
   const [formOpen, setFormOpen] = useState(false);
   const [editStock, setEditStock] = useState<Stock | null>(null);
   const [deleteStock, setDeleteStock] = useState<StockDelete | null>(null);
+  const [infoStockId, setInfoStockId] = useState<string | null>(null);
 
   // Debounce search input
   useEffect(() => {
@@ -228,6 +230,7 @@ export default function StockManagement({
           itemOptions={items}
           onEdit={openEdit}
           onDelete={openDelete}
+          onInfo={setInfoStockId}
         />
       </div>
 
@@ -245,6 +248,12 @@ export default function StockManagement({
         onOpenChange={handleDeleteOpenChange}
         stock={deleteStock}
         onSuccess={handleDeleteSuccess}
+      />
+
+      <StockInfoPanel
+        open={infoStockId !== null}
+        stockId={infoStockId ?? ""}
+        onClose={() => setInfoStockId(null)}
       />
     </div>
   );

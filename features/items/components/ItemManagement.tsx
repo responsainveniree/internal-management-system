@@ -20,6 +20,11 @@ import { Stock, StockDelete } from "@/features/stocks/stock.types";
 import { useLocations } from "@/features/locations/location.hooks";
 import { categoryGetManySchema } from "@/shared/lib/zods/category.zod";
 import ItemTable, { ItemTableFilters } from "./sub-components/item-table";
+import StockMovementFormDialog from "@/features/stock-movements/components/sub-components/StockMovementFormDialog";
+import {
+  ItemOption,
+  StockMovementFormOpenType,
+} from "@/features/stock-movements/stock-movements.types";
 
 type LocationOption = { id: string; name: string };
 
@@ -51,6 +56,20 @@ export default function ItemManagement({ locations }: ItemManagementProps) {
   const [statusChangeStatus, setStatusChangeStatus] = useState<
     "ACTIVE" | "INACTIVE"
   >("INACTIVE");
+
+  const [selectedGlobalItemStock, setSelectedGlobalItemStock] = useState<
+    ItemOption[]
+  >([
+    {
+      id: "",
+      name: "",
+    },
+  ]);
+  const [stockMovementFormOpen, setStockMovementFormOpen] =
+    useState<boolean>(false);
+
+  const [stockMovementFormOpenType, setStockMovementFormOpenType] =
+    useState<StockMovementFormOpenType>("GLOBAL_STOCK");
 
   useEffect(() => {
     const id = window.setTimeout(
@@ -242,6 +261,10 @@ export default function ItemManagement({ locations }: ItemManagementProps) {
     setDeleteStock(null);
   }, []);
 
+  const handleStockMovementFormSuccess = useCallback(() => {
+    setStockMovementFormOpen(false);
+  }, []);
+
   return (
     <div className="min-h-0 flex-1 bg-[#f8f9ff] px-4 py-8 md:px-10">
       <header className="flex flex-col gap-6 lg:flex-row lg:items-start lg:justify-between">
@@ -325,6 +348,9 @@ export default function ItemManagement({ locations }: ItemManagementProps) {
           openStockDelete={openStockDelete}
           openStockEdit={openStockEdit}
           openStockCreate={openStockCreate}
+          onSelectedGlobalItemStock={setSelectedGlobalItemStock}
+          onOpenStockMovement={setStockMovementFormOpen}
+          onStockMovementFormOpenType={setStockMovementFormOpenType}
         />
       ) : null}
 
@@ -342,6 +368,23 @@ export default function ItemManagement({ locations }: ItemManagementProps) {
         onSuccess={handleStockFormSuccess}
         stock={editStock}
         items={selectedItem?.id ? [selectedItem] : []}
+      />
+
+      <StockMovementFormDialog
+        items={selectedGlobalItemStock}
+        locations={
+          stockMovementFormOpenType === "GLOBAL_STOCK" ? [] : locations
+        }
+        isGlobalStock={true}
+        movementTypes={
+          stockMovementFormOpenType === "GLOBAL_STOCK"
+            ? ["RECEIVE"]
+            : ["TRANSFER"]
+        }
+        onOpenChange={setStockMovementFormOpen}
+        open={stockMovementFormOpen}
+        onSuccess={handleStockMovementFormSuccess}
+        hiddenFields={["stockBatch"]}
       />
     </div>
   );

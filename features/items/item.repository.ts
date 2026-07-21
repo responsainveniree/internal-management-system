@@ -74,6 +74,7 @@ const itemRepository = {
         data: {
           itemId: item.id,
           stockId: stock.id,
+          itemName: item.name,
           quantity: data.stock?.quantity ? data.stock.quantity : 0,
           totalCost: data.stock?.totalCost ? data.stock.totalCost : 0,
           reason: data.stock.reason ?? "Initial",
@@ -120,7 +121,11 @@ const itemRepository = {
                   [sortBy]: orderBy,
                 },
               }
-            : {}),
+            : {
+                orderBy: {
+                  quantity: orderBy,
+                },
+              }),
         },
       },
     });

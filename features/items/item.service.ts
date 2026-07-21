@@ -11,7 +11,7 @@ import itemRepository, {
 } from "./item.repository";
 import auditLogsRepository from "../audit-logs/audit-log.repository";
 import { EXPIRING_WINDOW_DAYS } from "./item.utils";
-import { Prisma, PrismaClient } from "@prisma/client";
+import { MovementType, Prisma, PrismaClient } from "@prisma/client";
 import { stockRepository } from "../stocks/stock.repository";
 import stockMovementsRepository from "../stock-movements/stock-movements.repository";
 import { Session } from "next-auth";
@@ -197,9 +197,13 @@ const itemService = {
           prisma,
         ),
 
-        // Querying a different repository/table (stockMovements)
         stockMovementsRepository.countQuantity(
-          { itemId: itemId, stockId: null },
+          {
+            stockId: null,
+            itemId: item?.id,
+            destinationLocationId: null,
+            sourceLocationId: null,
+          },
           prisma,
         ),
 
@@ -209,6 +213,16 @@ const itemService = {
           prisma,
         ),
       ]);
+
+    const unlocatedItem = await stockMovementsRepository.countQuantity(
+      {
+        stockId: null,
+        itemId: item?.id,
+        destinationLocationId: null,
+        sourceLocationId: null,
+      },
+      prisma,
+    );
 
     const totalExpiredStock = stockCounts["EXPIRED"] || 0;
     const totalDamagedStock = stockCounts["DAMAGED"] || 0;
@@ -236,7 +250,11 @@ const itemService = {
           isStockLow: isStockLow ? "Low in stock" : "-",
         },
         totalLocatedItemQuantity: totalLocatedItems,
-        totalUnlocatedItemQuantity: totalUnlocatedItems,
+        unlocatedItem: {
+          type: "RECEIVE" as MovementType,
+          quantity: totalUnlocatedItems,
+        },
+        totalUnlocatedItemQuantity: unlocatedItem ?? 0,
         totalDiscardedItems: totalDiscardedItems,
         totalDamagedStock,
         totalReadyStock,

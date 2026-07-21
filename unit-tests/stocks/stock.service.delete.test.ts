@@ -41,7 +41,7 @@ describe("stockService.delete", () => {
       item: { id: "item-1" },
     };
 
-    mockedStockRepository.get.mockResolvedValue(existingStock as any);
+    mockedStockRepository.getById.mockResolvedValue(existingStock as any);
     mockedStockRepository.delete.mockResolvedValue({
       id: "stock-1",
     } as any);
@@ -88,7 +88,7 @@ describe("stockService.delete", () => {
       callback(prismaMock),
     );
 
-    mockedStockRepository.get.mockResolvedValue(null);
+    mockedStockRepository.getById.mockResolvedValue(null);
 
     await expect(
       stockService.delete(fakeSession, "nonexistent-stock", prismaMock),
@@ -103,7 +103,7 @@ describe("stockService.delete", () => {
       callback(prismaMock),
     );
 
-    mockedStockRepository.get.mockResolvedValue({
+    mockedStockRepository.getById.mockResolvedValue({
       id: "stock-1",
       quantity: 5,
       type: "READY",
