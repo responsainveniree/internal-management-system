@@ -14,6 +14,10 @@ type StockRequestGetByIdResult = Awaited<
   ReturnType<typeof stockRequestService.getById>
 >;
 
+export type StockRequestListItem =
+  StockRequestGetManyResult["data"]["stockRequests"][number];
+export type StockRequestDetail = StockRequestGetByIdResult["stockRequest"];
+
 export type StockRequestGetManyApiResponse = ApiResponse<{
   stockRequests: StockRequestGetManyResult["data"]["stockRequests"];
   totalStockRequests: StockRequestGetManyResult["data"]["totalStockRequests"];
