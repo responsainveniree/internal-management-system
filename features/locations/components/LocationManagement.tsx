@@ -2,7 +2,7 @@
 
 import { useCallback, useEffect, useMemo, useState } from "react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
-import { ArrowDown, ArrowUp, Plus, Search } from "lucide-react";
+import { Plus } from "lucide-react";
 import { LocationType } from "@prisma/client";
 import { useLocations } from "@/features/locations/location.hooks";
 import type { LocationListItem } from "@/features/locations/location.types";
@@ -214,145 +214,58 @@ export default function LocationManagement() {
         </button>
       </header>
 
-      <section className="mt-8 rounded-xl border border-[#d9e3f4]/80 bg-white p-4 shadow-[0_12px_40px_-18px_rgba(15,23,42,0.08)] md:p-5">
-        <div className="relative min-w-0">
-          <Search
-            className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#565e74]/60"
-            strokeWidth={1.5}
-            aria-hidden
-          />
-          <input
-            type="search"
-            value={searchInput}
-            onChange={(e) => setSearchInput(e.target.value)}
-            placeholder="Search locations by name..."
-            className={cn(
-              "w-full rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 py-2.5 pe-3 ps-10 font-ochre-ui text-sm text-[#121c28] outline-none transition-[border-color,box-shadow]",
-              "placeholder:text-[#524439]/45 focus:border-[#894d0d]/35 focus:ring-2 focus:ring-[#894d0d]/15",
-            )}
-          />
-        </div>
-
-        <div className="mt-4 flex flex-wrap items-center gap-3">
-          <div className="flex items-center gap-2">
-            <span className="font-ochre-ui text-xs font-medium uppercase tracking-wide text-[#524439]/70">
-              Type:
-            </span>
-            <select
-              value={locationType ?? "ALL"}
-              onChange={(e) => {
-                const value = e.target.value;
-                updateSearchParams(
-                  {
-                    locationType: value === "ALL" ? undefined : value,
-                  },
-                  true,
-                );
-              }}
-              className={cn(
-                "min-w-28 appearance-none rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 px-2 py-1.5 font-ochre-ui text-sm text-[#121c28] outline-none transition-colors duration-200 hover:border-[#b0c8f8] focus:border-[#894d0d]/35 focus:ring-2 focus:ring-[#894d0d]/15 focus:outline-none",
-              )}
-            >
-              <option value="ALL">All</option>
-              {LOCATION_TYPE_OPTIONS.map((option) => (
-                <option key={option.value} value={option.value}>
-                  {option.label}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="font-ochre-ui text-xs font-medium uppercase tracking-wide text-[#524439]/70">
-              Sort:
-            </span>
-            <select
-              value={sortBy}
-              onChange={(e) =>
-                updateSearchParams({ sortBy: e.target.value }, true)
-              }
-              className={cn(
-                "min-w-28 appearance-none rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 px-2 py-1.5 font-ochre-ui text-sm text-[#121c28] outline-none transition-colors duration-200 hover:border-[#b0c8f8] focus:border-[#894d0d]/35 focus:ring-2 focus:ring-[#894d0d]/15 focus:outline-none",
-              )}
-            >
-              <option value="name">Name</option>
-              <option value="type">Type</option>
-              <option value="createdAt">Created</option>
-              <option value="updatedAt">Updated</option>
-            </select>
-          </div>
-
-          <div className="flex items-center gap-2">
-            <span className="font-ochre-ui text-xs font-medium uppercase tracking-wide text-[#524439]/70">
-              Show:
-            </span>
-            <select
-              value={String(dataPerPage)}
-              onChange={(e) =>
-                updateSearchParams({ dataPerPage: e.target.value }, true)
-              }
-              className={cn(
-                "min-w-28 appearance-none rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 px-2 py-1.5 font-ochre-ui text-sm text-[#121c28] outline-none transition-colors duration-200 hover:border-[#b0c8f8] focus:border-[#894d0d]/35 focus:ring-2 focus:ring-[#894d0d]/15 focus:outline-none",
-              )}
-            >
-              {DATA_PER_PAGE_OPTIONS.map((option) => (
-                <option key={option} value={option}>
-                  {option}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              onClick={() => updateSearchParams({ sortOrderEnum: "asc" }, true)}
-              className={cn(
-                "rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 p-2 text-[#565e74] outline-none transition-colors",
-                sortOrderEnum === "asc" &&
-                  "border-[#894d0d]/35 text-[#894d0d] ring-2 ring-[#894d0d]/15",
-                "hover:border-[#894d0d]/35 hover:text-[#894d0d]",
-                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#894d0d]",
-              )}
-              aria-label="Sort ascending"
-            >
-              <ArrowUp className="size-4" strokeWidth={1.5} />
-            </button>
-            <button
-              type="button"
-              onClick={() =>
-                updateSearchParams({ sortOrderEnum: "desc" }, true)
-              }
-              className={cn(
-                "rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 p-2 text-[#565e74] outline-none transition-colors",
-                sortOrderEnum === "desc" &&
-                  "border-[#894d0d]/35 text-[#894d0d] ring-2 ring-[#894d0d]/15",
-                "hover:border-[#894d0d]/35 hover:text-[#894d0d]",
-                "focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-[#894d0d]",
-              )}
-              aria-label="Sort descending"
-            >
-              <ArrowDown className="size-4" strokeWidth={1.5} />
-            </button>
-          </div>
-        </div>
-      </section>
-
       <div className="mt-8">
         <LocationTable
           locations={locations}
           totalCount={totalCount}
           isLoading={isLoading}
           isError={isError}
+          filters={{
+            searchQuery: searchInput,
+            locationType: locationType ?? "ALL",
+          }}
+          onFiltersChange={(patch) => {
+            if (patch.searchQuery !== undefined) {
+              setSearchInput(patch.searchQuery);
+            }
+            if (patch.locationType !== undefined) {
+              updateSearchParams(
+                {
+                  locationType:
+                    patch.locationType === "ALL"
+                      ? undefined
+                      : patch.locationType,
+                },
+                true,
+              );
+            }
+          }}
+          sortBy={sortBy}
+          sortOrder={sortOrderEnum}
+          onRequestSort={(column) => {
+            if (sortBy === column) {
+              updateSearchParams(
+                { sortOrderEnum: sortOrderEnum === "asc" ? "desc" : "asc" },
+                true,
+              );
+            } else {
+              updateSearchParams(
+                { sortBy: column, sortOrderEnum: "asc" },
+                true,
+              );
+            }
+          }}
           page={page}
           dataPerPage={dataPerPage}
           onPageChange={(nextPage) =>
             updateSearchParams({ page: String(nextPage) })
           }
+          onDataPerPageChange={(nextDataPerPage) =>
+            updateSearchParams({ dataPerPage: String(nextDataPerPage) }, true)
+          }
           onInfo={(location) => setSelectedLocationId(location.id)}
           onEdit={openEdit}
           onDelete={openDelete}
-          onCreateFirst={openCreate}
         />
       </div>
 

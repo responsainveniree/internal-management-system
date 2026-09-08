@@ -1,80 +1,57 @@
 "use client";
-import { cn } from "@/shared/lib/utils";
+
 import { ItemGetManySchema } from "@/shared/lib/zods/item.zod";
+import { ArrowUpDown } from "lucide-react";
+
 type SortBy = ItemGetManySchema["sortBy"];
+
 type TableHeaderProps = {
   sortBy: SortBy;
   sortOrder: "asc" | "desc";
   onRequestSort: (column: SortBy) => void;
 };
-function SortIndicator({
-  active,
-  order,
-}: {
-  active: boolean;
-  order: "asc" | "desc";
-}) {
-  if (!active) {
-    return (
-      <span className="ms-1 inline-block text-[#121c28]/25" aria-hidden>
-        ↕
-      </span>
-    );
-  }
+
+export default function TableHeader({ onRequestSort }: TableHeaderProps) {
   return (
-    <span className="ms-1 inline-block text-[#894d0d]" aria-hidden>
-      {order === "asc" ? "↑" : "↓"}
-    </span>
-  );
-}
-export default function TableHeader({
-  sortBy,
-  sortOrder,
-  onRequestSort,
-}: TableHeaderProps) {
-  return (
-    <thead>
-      <tr className="border-b border-[#d9e3f4] text-left h-12">
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
+    <thead className="border-b border-[#d9e3f4] bg-[#eef4ff]/70 text-left font-ochre-ui text-xs font-semibold uppercase tracking-wider text-[#524439]">
+      <tr>
+        <th scope="col" className="px-4 py-3.5 align-middle">
           <button
             type="button"
             onClick={() => onRequestSort("name")}
-            className={cn(
-              "inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#894d0d]/40",
-              sortBy === "name" && "text-[#894d0d]",
-            )}
+            className="inline-flex items-center gap-1 hover:text-[#894d0d] focus:outline-none"
           >
-            ITEM DETAILS
-            <SortIndicator active={sortBy === "name"} order={sortOrder} />
+            Item Details
+            <ArrowUpDown className="size-3.5" />
           </button>
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
-          STATUS
+        <th scope="col" className="px-4 py-3.5 align-middle">
+          Status
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
-          CATEGORY
+        <th scope="col" className="px-4 py-3.5 align-middle">
+          Category
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
-          SELLING PRICE
+        <th scope="col" className="px-4 py-3.5 align-middle">
+          Selling Price
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
-          COST PRICE
+        <th scope="col" className="px-4 py-3.5 align-middle">
+          Cost Price
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
+        <th
+          scope="col"
+          className="hidden px-4 py-3.5 align-middle lg:table-cell"
+        >
           <button
             type="button"
             onClick={() => onRequestSort("createdAt")}
-            className={cn(
-              "inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#894d0d]/40",
-              sortBy === "createdAt" && "text-[#894d0d]",
-            )}
+            className="inline-flex items-center gap-1 hover:text-[#894d0d] focus:outline-none"
           >
-            UPDATED
-            <SortIndicator active={sortBy === "createdAt"} order={sortOrder} />
+            Updated
+            <ArrowUpDown className="size-3.5" />
           </button>
         </th>
-        <th className="w-24 px-4 align-middle text-end font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
-          ACTIONS
+        <th scope="col" className="px-4 py-3.5 text-right align-middle">
+          Actions
         </th>
       </tr>
     </thead>

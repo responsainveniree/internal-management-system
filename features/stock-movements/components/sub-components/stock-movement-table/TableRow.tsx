@@ -11,6 +11,7 @@ type StockMovementRow =
 
 type TableRowProps = {
   movement: StockMovementRow;
+  index: number;
   onInfo: (movementId: string) => void;
 };
 
@@ -21,27 +22,34 @@ function formatMovementType(value: string) {
     .join(" ");
 }
 
-export default function TableRow({ movement, onInfo }: TableRowProps) {
-  const sourceName = movement.sourceLocation?.name ?? "-";
-  const destinationName = movement.destinationLocation?.name ?? "-";
+export default function TableRow({ movement, index, onInfo }: TableRowProps) {
+  const isEven = index % 2 === 0;
+  const sourceName = movement.sourceLocation?.name ?? "—";
+  const destinationName = movement.destinationLocation?.name ?? "—";
   const costLabel =
     movement.totalCost == null
       ? "No cost logged"
       : formatPrice(movement.totalCost);
 
   return (
-    <tr className="border-b border-[#eef4ff] last:border-0 hover:bg-[#f8f9ff]/80">
-      <td className="px-4 py-3 align-middle">
+    <tr
+      className={cn(
+        "border-b border-[#eef4ff] transition-colors duration-150",
+        isEven ? "bg-[#f8f9ff]/50" : "bg-white",
+        "hover:bg-[#f5f8ff]",
+      )}
+    >
+      <td className="px-4 py-3.5 align-middle">
         <div className="min-w-0">
           <p className="truncate font-ochre-ui text-sm font-semibold text-[#121c28]">
             {movement.itemName ?? "Unknown item"}
           </p>
         </div>
       </td>
-      <td className="px-4 py-3 align-middle">
+      <td className="px-4 py-3.5 align-middle">
         <span
           className={cn(
-            "inline-flex rounded-full border px-2.5 py-0.5 font-ochre-ui text-[10px] font-semibold uppercase tracking-wider",
+            "inline-flex rounded-full border px-2.5 py-0.5 font-ochre-ui text-[10px] font-bold uppercase tracking-wider",
             movementTone[movement.type] ??
               "border-[#d9e3f4] bg-[#eef4ff] text-[#565e74]",
           )}
@@ -52,33 +60,32 @@ export default function TableRow({ movement, onInfo }: TableRowProps) {
           Qty {movement.quantity}
         </p>
       </td>
-      <td className="px-4 py-3 align-middle font-ochre-ui text-sm text-[#524439]">
+      <td className="px-4 py-3.5 align-middle font-ochre-ui text-xs font-medium text-[#121c28]">
         {sourceName}
       </td>
-      <td className="px-4 py-3 align-middle font-ochre-ui text-sm text-[#524439]">
+      <td className="px-4 py-3.5 align-middle font-ochre-ui text-xs font-medium text-[#121c28]">
         {destinationName}
       </td>
-      <td className="px-4 py-3 align-middle">
-        <p className="font-ochre-ui text-sm text-[#524439]">
+      <td className="hidden px-4 py-3.5 align-middle md:table-cell">
+        <p className="font-ochre-ui text-xs text-[#524439]">
           {formatItemDate(movement.createdAt)}
         </p>
-        <p className="mt-0.5 font-ochre-ui text-xs text-[#524439]/70">
+        <p className="mt-0.5 font-ochre-ui text-[11px] text-[#524439]/70">
           {costLabel}
         </p>
       </td>
-      <td className="px-4 py-3 text-end align-middle">
-        <button
-          type="button"
-          onClick={() => onInfo(movement.id)}
-          className={cn(
-            "inline-flex items-center justify-center rounded-md p-2 outline-none transition-all duration-200 ease-out",
-            "bg-[#eef4ff] text-[#121c28] hover:-translate-y-0.5 hover:bg-[#e5eeff] hover:text-[#894d0d]",
-            "focus-visible:ring-2 focus-visible:ring-[#894d0d] focus-visible:ring-offset-2",
-          )}
-          aria-label={`View movement for ${movement.item?.name ?? "item"}`}
-        >
-          <Eye className="size-4" strokeWidth={1.5} />
-        </button>
+      <td className="px-4 py-3.5 align-middle text-right whitespace-nowrap">
+        <div className="inline-flex items-center justify-end gap-1.5">
+          <button
+            type="button"
+            onClick={() => onInfo(movement.id)}
+            className="inline-flex size-7 items-center justify-center rounded-md border border-[#e5eeff] bg-[#eef4ff] text-[#894d0d] transition-all hover:bg-[#894d0d] hover:text-white shadow-xs focus-visible:outline-2 focus-visible:outline-[#894d0d]"
+            title="View Details"
+            aria-label={`View movement for ${movement.itemName ?? "item"}`}
+          >
+            <Eye className="size-4" strokeWidth={1.5} />
+          </button>
+        </div>
       </td>
     </tr>
   );

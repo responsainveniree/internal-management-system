@@ -135,7 +135,12 @@ const stockRequestService = {
     const transaction = await prisma.$transaction(async (tx) => {
       const updatedStockRequest = await stockRequestRepository.update(
         stockRequestId,
-        data,
+        {
+          destinationLocationId: destinationLocation!.id,
+          sourceLocationId: stock!.locationId,
+          type: data.type,
+          requestedQuantity: data.requestedQuantity,
+        },
         tx,
       );
 
@@ -197,7 +202,13 @@ const stockRequestService = {
       const reviewedStockRequest = await stockRequestRepository.review(
         session.id,
         stockRequestId,
-        data,
+        {
+          ...data,
+          stockRequestStatus:
+            data.approvedQuantity < stockRequest!.requestedQuantity
+              ? "PARTIALLY_APPROVED"
+              : data.stockRequestStatus,
+        },
         tx,
       );
 
@@ -303,6 +314,7 @@ const stockRequestService = {
     );
 
     const select = createStockRequestSelect({
+      id: true,
       approvedBy: { select: { id: true, name: true } },
       requestedBy: { select: { id: true, name: true } },
       createdAt: true,
@@ -344,6 +356,7 @@ const stockRequestService = {
     prisma: PrismaClient | Prisma.TransactionClient,
   ) => {
     const select = createStockRequestSelect({
+      id: true,
       approvedBy: { select: { id: true, name: true } },
       requestedBy: { select: { id: true, name: true } },
       createdAt: true,

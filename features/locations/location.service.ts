@@ -1,5 +1,4 @@
-import { badRequest, forbidden, notFound } from "@/shared/lib/error-handlers";
-import { canManageLocation } from "@/shared/lib/validations/user-access-validation";
+import { badRequest, notFound } from "@/shared/lib/error-handlers";
 import {
   LocationCreateSchema,
   LocationGetByIdSchema,
@@ -133,10 +132,6 @@ const locationService = {
     params: LocationGetManySchema,
     prisma: PrismaClient,
   ) => {
-    if (!canManageLocation(session.role)) {
-      throw forbidden("You're not allowed to access this feature");
-    }
-
     const whereQuery = locationRepository.buildLocationWhereClause(params);
 
     const selectData = locationSelectData({

@@ -1,7 +1,6 @@
 import {
   StockRequestFilterSchema,
   StockRequestReviewSchema,
-  StockRequestUpdateSchema,
 } from "@/shared/lib/zods/stock-request.zod";
 import { Prisma, PrismaClient } from "@prisma/client";
 import { Session } from "next-auth";
@@ -90,19 +89,14 @@ export const stockRequestRepository = {
 
   update: async (
     stockRequestId: string,
-    data: StockRequestUpdateSchema,
+    data: Prisma.StockRequestUncheckedUpdateInput,
     tx: Prisma.TransactionClient | PrismaClient,
   ) => {
     return await tx.stockRequest.update({
       where: {
         id: stockRequestId,
       },
-      data: {
-        requestedQuantity: data.requestedQuantity,
-        sourceLocationId: data.destinationLocationId,
-        destinationLocationId: data.sourceLocationId,
-        type: data.type,
-      },
+      data,
     });
   },
 
