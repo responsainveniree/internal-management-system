@@ -8,6 +8,7 @@ import { formatItemDate, formatPrice } from "@/shared/lib/formatter";
 
 type TableRowProps = {
   item: Item;
+  index: number;
   onInfo: (item: { id: string; name: string }) => void;
   onEdit: (item: Item) => void;
   onStatusChange: (item: Item, status: "ACTIVE" | "INACTIVE") => void;
@@ -16,18 +17,25 @@ type TableRowProps = {
 
 export default function TableRow({
   item,
+  index,
   onInfo,
   onEdit,
   onStatusChange,
-  onDelete,
 }: TableRowProps) {
   const categoryLabel = item.category?.name ?? "General";
+  const isEven = index % 2 === 0;
 
   return (
-    <tr className="border-b border-[#eef4ff] last:border-0 hover:bg-[#f8f9ff]/80">
-      <td className="px-4 py-3 align-middle">
+    <tr
+      className={cn(
+        "border-b border-[#eef4ff] transition-colors duration-150",
+        isEven ? "bg-[#f8f9ff]/50" : "bg-white",
+        "hover:bg-[#f5f8ff]",
+      )}
+    >
+      <td className="px-4 py-3.5 align-middle">
         <div className="flex min-w-0 items-center gap-3">
-          <div className="relative size-10 shrink-0 overflow-hidden rounded-md bg-[#e5eeff]">
+          <div className="relative size-10 shrink-0 overflow-hidden rounded-lg bg-[#e5eeff]">
             {item.image ? (
               <Image
                 src={item.image}
@@ -47,66 +55,52 @@ export default function TableRow({
             <p className="truncate font-ochre-ui text-sm font-semibold text-[#121c28]">
               {item.name}
             </p>
-            {/* <p className="font-ochre-ui text-xs text-[#524439]/70">
-              SKU: {formatItemSku(item.id)}
-            </p> */}
           </div>
         </div>
       </td>
-      <td className="px-4 py-3 align-middle">
+      <td className="px-4 py-3.5 align-middle">
         <span
           className={cn(
-            "inline-flex rounded-full border px-2.5 py-0.5 font-ochre-ui text-[10px] font-semibold uppercase tracking-wider",
+            "inline-flex rounded-full border px-2.5 py-0.5 font-ochre-ui text-[10px] font-bold uppercase tracking-wider",
             item.isActive
-              ? "bg-emerald-100 text-emerald-800"
-              : "bg-rose-100 text-rose-800",
+              ? "border-emerald-200 bg-emerald-50 text-emerald-800"
+              : "border-rose-200 bg-rose-50 text-rose-800",
           )}
         >
           {item.isActive ? "ACTIVE" : "INACTIVE"}
         </span>
       </td>
-      <td className="px-4 py-3 align-middle">
-        <span className="inline-flex rounded-md bg-[#121c28] px-2 py-0.5 font-ochre-ui text-xs font-semibold text-white">
+      <td className="px-4 py-3.5 align-middle">
+        <span className="inline-flex rounded-md bg-[#121c28] px-2.5 py-0.5 font-ochre-ui text-xs font-semibold text-white">
           {categoryLabel}
         </span>
       </td>
-      <td className="px-4 py-3 align-middle font-ochre-ui text-sm text-[#121c28]">
-        {item.sellingPrice ? formatPrice(item.sellingPrice) : "-"}
+      <td className="px-4 py-3.5 align-middle font-ochre-ui text-sm font-medium text-[#894d0d]">
+        {item.sellingPrice ? formatPrice(item.sellingPrice) : "—"}
       </td>
-      <td className="px-4 py-3 align-middle font-ochre-ui text-sm text-[#121c28]">
-        {item.costPrice ? formatPrice(item.costPrice) : "-"}
+      <td className="px-4 py-3.5 align-middle font-ochre-ui text-sm font-medium text-[#121c28]">
+        {item.costPrice ? formatPrice(item.costPrice) : "—"}
       </td>
-
-      <td className="px-4 py-3 align-middle font-ochre-ui text-sm text-[#524439]">
+      <td className="hidden px-4 py-3.5 align-middle font-ochre-ui text-xs text-[#524439] lg:table-cell">
         {formatItemDate(item.updatedAt)}
       </td>
-      <td className="px-4 py-3 align-middle text-end">
-        <div className="inline-flex items-center gap-1">
+      <td className="px-4 py-3.5 align-middle text-right whitespace-nowrap">
+        <div className="inline-flex items-center justify-end gap-1.5">
           <button
             type="button"
             onClick={() => onInfo({ id: item.id, name: item.name })}
-            className={cn(
-              "rounded-md p-2 outline-none inline-flex items-center justify-center transition-all duration-200 ease-out",
-              "bg-[#eef4ff] text-[#121c28] hover:bg-[#e5eeff] hover:text-[#894d0d]",
-              "hover:-translate-y-0.5 active:translate-y-0",
-              "hover:shadow-[0_8px_16px_-6px_rgba(15,23,42,0.08)]",
-              "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#894d0d]",
-            )}
+            className="inline-flex size-7 items-center justify-center rounded-md border border-[#e5eeff] bg-[#eef4ff] text-[#894d0d] transition-all hover:bg-[#894d0d] hover:text-white shadow-xs focus-visible:outline-2 focus-visible:outline-[#894d0d]"
+            title="View Details"
             aria-label={`View details for ${item.name}`}
           >
             <Info className="size-4" strokeWidth={1.5} />
           </button>
+
           <button
             type="button"
             onClick={() => onEdit(item)}
-            className={cn(
-              "rounded-md p-2 outline-none inline-flex items-center justify-center transition-all duration-200 ease-out",
-              "bg-transparent text-[#565e74]",
-              "hover:-translate-y-0.5 active:translate-y-0",
-              "hover:shadow-[0_8px_16px_-6px_rgba(15,23,42,0.08)]",
-              "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#894d0d]",
-              "hover:bg-[#e5eeff] hover:text-[#121c28]",
-            )}
+            className="inline-flex size-7 items-center justify-center rounded-md border border-[#e5eeff] bg-white text-[#565e74] transition-all hover:bg-[#e5eeff] hover:text-[#121c28] shadow-xs focus-visible:outline-2 focus-visible:outline-[#894d0d]"
+            title="Edit Item"
             aria-label={`Edit ${item.name}`}
           >
             <Pencil className="size-4" strokeWidth={1.5} />
@@ -115,61 +109,24 @@ export default function TableRow({
           {item.isActive ? (
             <button
               type="button"
-              onClick={() => {
-                onStatusChange(item, "INACTIVE");
-              }}
-              className={cn(
-                "inline-flex items-center justify-center rounded-md p-2 outline-none transition-all duration-200 ease-out",
-                "bg-transparent text-[#565e74]",
-                "hover:-translate-y-0.5 hover:bg-[#565e74]/10 hover:text-[#1e2538] active:translate-y-0",
-                "hover:shadow-[0_8px_16px_-6px_rgba(15,23,42,0.08)]",
-                "focus-visible:ring-2 focus-visible:ring-[#ba1a1a] focus-visible:ring-offset-2",
-              )}
-              aria-label={`inactive ${item.name}`}
+              onClick={() => onStatusChange(item, "INACTIVE")}
+              className="inline-flex size-7 items-center justify-center rounded-md border border-[#ffdad6] bg-rose-50 text-rose-700 transition-all hover:bg-rose-100 shadow-xs focus-visible:outline-2 focus-visible:outline-rose-600"
+              title="Deactivate Item"
+              aria-label={`Deactivate ${item.name}`}
             >
-              <PowerOff className="size-4" strokeWidth={1.5} />
+              <PowerOff className="size-3.5" strokeWidth={1.5} />
             </button>
           ) : (
             <button
               type="button"
-              onClick={() => {
-                onStatusChange(item, "ACTIVE");
-              }}
-              className={cn(
-                "inline-flex items-center justify-center rounded-md p-2 outline-none transition-all duration-200 ease-out",
-                "bg-transparent text-[#565e74]",
-                "hover:-translate-y-0.5 hover:bg-emerald-500/10 hover:text-emerald-700 active:translate-y-0",
-                "hover:shadow-[0_8px_16px_-6px_rgba(15,23,42,0.08)]",
-                "focus-visible:ring-2 focus-visible:ring-emerald-500 focus-visible:ring-offset-2",
-              )}
+              onClick={() => onStatusChange(item, "ACTIVE")}
+              className="inline-flex size-7 items-center justify-center rounded-md border border-emerald-200 bg-emerald-50 text-emerald-700 transition-all hover:bg-emerald-100 shadow-xs focus-visible:outline-2 focus-visible:outline-emerald-600"
+              title="Activate Item"
               aria-label={`Activate ${item.name}`}
             >
-              <PowerIcon className="size-4" strokeWidth={1.5} />
+              <PowerIcon className="size-3.5" strokeWidth={1.5} />
             </button>
           )}
-
-          {/* Turn off delete feature for a while, can be re-activated in the future  */}
-          {/* {!item.isActive &&
-            data?.user.role &&
-            canDeleteItem(data?.user.role) && (
-              <button
-                type="button"
-                onClick={() => {
-                  onDelete(item);
-                }}
-                className={cn(
-                  "rounded-md p-2 outline-none inline-flex items-center justify-center transition-all duration-200 ease-out",
-                  "bg-transparent text-[#565e74]",
-                  "hover:-translate-y-0.5 active:translate-y-0",
-                  "hover:shadow-[0_8px_16px_-6px_rgba(15,23,42,0.08)]",
-                  "focus-visible:ring-2 focus-visible:ring-offset-2 focus-visible:ring-[#ba1a1a]",
-                  "hover:bg-[#ffdad6]/60 hover:text-[#ba1a1a]",
-                )}
-                aria-label={`Delete ${item.name}`}
-              >
-                <Trash2 className="size-4" strokeWidth={1.5} />
-              </button>
-            )} */}
         </div>
       </td>
     </tr>

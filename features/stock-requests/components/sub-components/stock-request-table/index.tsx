@@ -1,9 +1,9 @@
 "use client";
 
-import { useState } from "react";
-import { Search, ChevronsLeft, ChevronsRight, MapPin } from "lucide-react";
+import { Search, MapPin } from "lucide-react";
 import { StockRequestListItem } from "@/features/stock-requests/stock-request.types";
 import { Input } from "@/shared/components/ui/input";
+import DataTablePagination from "@/shared/components/DataTablePagination";
 import {
   Select,
   SelectContent,
@@ -239,63 +239,15 @@ export default function StockRequestTable({
       </div>
 
       {/* Pagination Footer */}
-      <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between px-1 py-2 font-ochre-ui text-xs text-[#524439]">
-        <div>
-          Showing{" "}
-          <span className="font-semibold text-[#121c28]">
-            {rangeStart}–{rangeEnd}
-          </span>{" "}
-          of{" "}
-          <span className="font-semibold text-[#121c28]">
-            {totalStockRequests}
-          </span>{" "}
-          stock requests
-        </div>
-
-        <div className="flex items-center justify-end gap-4">
-          <div className="flex items-center gap-2">
-            <span>Rows per page:</span>
-            <Select
-              value={String(dataPerPage)}
-              onValueChange={(val) => onDataPerPageChange(Number(val))}
-            >
-              <SelectTrigger className="h-8 w-18 rounded-md border-[#e5eeff] bg-[#f8f9ff]/80 font-ochre-ui text-xs">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="5">5</SelectItem>
-                <SelectItem value="10">10</SelectItem>
-                <SelectItem value="25">25</SelectItem>
-                <SelectItem value="50">50</SelectItem>
-              </SelectContent>
-            </Select>
-          </div>
-
-          <div className="flex items-center gap-1">
-            <button
-              type="button"
-              disabled={!hasPrevPage}
-              onClick={() => onPageChange(page - 1)}
-              className="inline-flex size-8 items-center justify-center rounded-md border border-[#e5eeff] bg-white text-[#121c28] disabled:opacity-40 hover:bg-[#f8f9ff] transition-colors"
-              aria-label="Previous Page"
-            >
-              <ChevronsLeft className="size-4" />
-            </button>
-            <span className="px-2 font-medium">
-              Page {page} of {totalPages}
-            </span>
-            <button
-              type="button"
-              disabled={!hasNextPage}
-              onClick={() => onPageChange(page + 1)}
-              className="inline-flex size-8 items-center justify-center rounded-md border border-[#e5eeff] bg-white text-[#121c28] disabled:opacity-40 hover:bg-[#f8f9ff] transition-colors"
-              aria-label="Next Page"
-            >
-              <ChevronsRight className="size-4" />
-            </button>
-          </div>
-        </div>
-      </div>
+      <DataTablePagination
+        page={page}
+        totalCount={totalStockRequests}
+        dataPerPage={dataPerPage}
+        onPageChange={onPageChange}
+        onDataPerPageChange={onDataPerPageChange}
+        pageSizeOptions={[5, 10, 25, 50]}
+        entityLabel="stock requests"
+      />
     </div>
   );
 }

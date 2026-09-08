@@ -1,9 +1,7 @@
 "use client";
 
 import { useCallback, useEffect, useMemo, useState } from "react";
-import { toast } from "sonner";
-import { Plus, Search } from "lucide-react";
-import { cn } from "@/shared/lib/utils";
+import { Plus } from "lucide-react";
 import {
   categoryGetManySchema,
   type CategoryCreateSchema,
@@ -22,6 +20,8 @@ import CategoryDeleteModal from "./sub-components/CategoryDeleteModal";
 import CategoryInfoPanel from "./sub-components/category-table/CategoryInfoPanel";
 import type { CategorySortBy } from "./sub-components/category-table/TableHeader";
 import CategoryTable from "./sub-components/category-table/index";
+import { cn } from "@/shared/lib/utils";
+import { toast } from "sonner";
 
 export default function CategoryManagement() {
   const [page, setPage] = useState(1);
@@ -111,8 +111,6 @@ export default function CategoryManagement() {
     });
   }, []);
 
-  const sortPreset = `${sortBy}:${sortOrder}`;
-
   const handleCreate = async (values: CategoryCreateSchema) => {
     try {
       await createMutation.mutateAsync(values);
@@ -149,9 +147,9 @@ export default function CategoryManagement() {
     }
   };
 
-  const handleImportPlaceholder = useCallback(() => {
-    toast.message("Import data will be available in a future release.");
-  }, []);
+  // const handleImportPlaceholder = useCallback(() => {
+  //   toast.message("Import data will be available in a future release.");
+  // }, []);
 
   return (
     <div className="min-h-screen flex-1 bg-[#f8f9ff] px-4 py-8 md:px-10 ">
@@ -179,91 +177,29 @@ export default function CategoryManagement() {
         </button>
       </header>
 
-      <section className="mt-8 rounded-xl border border-[#d9e3f4]/80 bg-white p-4 shadow-[0_12px_40px_-18px_rgba(15,23,42,0.08)] md:p-5">
-        <div className="flex flex-col gap-4 lg:flex-row lg:items-center lg:justify-between">
-          <div className="relative min-w-0 flex-1">
-            <Search
-              className="pointer-events-none absolute left-3 top-1/2 size-4 -translate-y-1/2 text-[#565e74]/60"
-              strokeWidth={1.5}
-              aria-hidden
-            />
-            <input
-              type="search"
-              value={searchInput}
-              onChange={(e) => setSearchInput(e.target.value)}
-              placeholder="Search categories by name..."
-              className={cn(
-                "w-full rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 py-2.5 pe-3 ps-10 font-ochre-ui text-sm text-[#121c28] outline-none transition-[border-color,box-shadow]",
-                "placeholder:text-[#524439]/45 focus:border-[#894d0d]/35 focus:ring-2 focus:ring-[#894d0d]/15",
-              )}
-            />
-          </div>
-          <div className="flex shrink-0 items-center gap-2">
-            <label className="sr-only" htmlFor="category-sort">
-              Sort categories
-            </label>
-            <span className="hidden font-ochre-ui text-xs font-medium uppercase tracking-wide text-[#524439]/70 sm:inline">
-              Sort by
-            </span>
-            <select
-              id="category-sort"
-              value={sortPreset}
-              onChange={(e) => {
-                const [sb, so] = e.target.value.split(":") as [
-                  CategoryGetManySchema["sortBy"],
-                  CategoryGetManySchema["sortOrder"],
-                ];
-                setSortBy(sb);
-                setSortOrder(so);
-              }}
-              className={cn(
-                "min-w-44 rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 px-3 py-2 font-ochre-ui text-sm text-[#121c28] outline-none",
-                "focus:border-[#894d0d]/35 focus:ring-2 focus:ring-[#894d0d]/15",
-              )}
-            >
-              <option value="name:asc">Name (A–Z)</option>
-              <option value="name:desc">Name (Z–A)</option>
-              <option value="createdAt:desc">Last updated (newest)</option>
-              <option value="createdAt:asc">Last updated (oldest)</option>
-            </select>
-          </div>
-          <div className="flex items-center gap-2">
-            <span className="font-ochre-ui text-xs font-medium uppercase tracking-wide text-[#524439]/70">
-              Show:
-            </span>
-            <select
-              value={String(itemDataPerPage)}
-              onChange={(e) => {
-                setItemDataPerPage(Number(e.target.value));
-              }}
-              className="min-w-28 appearance-none rounded-lg border border-[#e5eeff] bg-[#f8f9ff]/80 px-2 py-1.5 font-ochre-ui text-sm text-[#121c28] outline-none transition-colors duration-200 hover:border-[#b0c8f8] focus:border-[#894d0d]/35 focus:ring-2 focus:ring-[#894d0d]/15 focus:outline-none"
-            >
-              {[10, 20, 50, 100].map((n) => (
-                <option key={n} value={n}>
-                  {n}
-                </option>
-              ))}
-            </select>
-          </div>
-        </div>
-      </section>
-
       <div className="mt-8">
         <CategoryTable
           totalCategoryData={totalCategoryData ?? 0}
           categories={categories ?? []}
           isLoading={isLoading}
           isError={isError}
+          filters={{
+            searchQuery: searchInput,
+          }}
+          onFiltersChange={(patch) => {
+            if (patch.searchQuery !== undefined) {
+              setSearchInput(patch.searchQuery);
+            }
+          }}
           sortBy={sortBy}
           sortOrder={sortOrder}
           onRequestSort={handleRequestSort}
           page={page}
           dataPerPage={itemDataPerPage}
           onPageChange={setPage}
+          onDataPerPageChange={setItemDataPerPage}
           onEdit={openEdit}
           onDelete={openDelete}
-          onCreateFirst={openCreate}
-          onImportData={handleImportPlaceholder}
           onInfo={(categoryId) => setSelectedCategoryId(categoryId)}
         />
       </div>

@@ -1,7 +1,7 @@
 "use client";
 
 import { StockSortBy } from "@/features/stocks/stock.types";
-import { cn } from "@/shared/lib/utils";
+import { ArrowUpDown } from "lucide-react";
 
 type TableHeaderProps = {
   showItemName: boolean;
@@ -10,99 +10,70 @@ type TableHeaderProps = {
   onRequestSort: (column: StockSortBy) => void;
 };
 
-function SortIndicator({
-  active,
-  order,
-}: {
-  active: boolean;
-  order: "asc" | "desc";
-}) {
-  if (!active) {
-    return (
-      <span className="ms-1 inline-block text-[#121c28]/25" aria-hidden>
-        ↕
-      </span>
-    );
-  }
-  return (
-    <span className="ms-1 inline-block text-[#894d0d]" aria-hidden>
-      {order === "asc" ? "↑" : "↓"}
-    </span>
-  );
-}
-
 export default function TableHeader({
   showItemName,
-  sortBy,
-  sortOrder,
   onRequestSort,
 }: TableHeaderProps) {
   return (
-    <thead>
-      <tr className="border-b border-[#d9e3f4] text-left h-12">
+    <thead className="border-b border-[#d9e3f4] bg-[#eef4ff]/70 text-left font-ochre-ui text-xs font-semibold uppercase tracking-wider text-[#524439]">
+      <tr>
         {showItemName && (
-          <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
-            ITEM
+          <th scope="col" className="px-4 py-3.5 align-middle">
+            Item
           </th>
         )}
 
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
-          LOCATION
+        <th scope="col" className="px-4 py-3.5 align-middle">
+          Location
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
+        <th scope="col" className="px-4 py-3.5 align-middle">
           <button
             type="button"
             onClick={() => onRequestSort("stockType")}
-            className={cn(
-              "inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#894d0d]/40",
-              sortBy === "stockType" && "text-[#894d0d]",
-            )}
+            className="inline-flex items-center gap-1 hover:text-[#894d0d] focus:outline-none"
           >
-            TYPE
-            <SortIndicator active={sortBy === "stockType"} order={sortOrder} />
+            Type
+            <ArrowUpDown className="size-3.5" />
           </button>
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
+        <th scope="col" className="px-4 py-3.5 align-middle">
           <button
             type="button"
             onClick={() => onRequestSort("quantity")}
-            className={cn(
-              "inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#894d0d]/40",
-              sortBy === "quantity" && "text-[#894d0d]",
-            )}
+            className="inline-flex items-center gap-1 hover:text-[#894d0d] focus:outline-none"
           >
-            QUANTITY
-            <SortIndicator active={sortBy === "quantity"} order={sortOrder} />
+            Quantity
+            <ArrowUpDown className="size-3.5" />
           </button>
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
+        <th
+          scope="col"
+          className="hidden px-4 py-3.5 align-middle md:table-cell"
+        >
           <button
             type="button"
             onClick={() => onRequestSort("expiredAt")}
-            className={cn(
-              "inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#894d0d]/40",
-              sortBy === "expiredAt" && "text-[#894d0d]",
-            )}
+            className="inline-flex items-center gap-1 hover:text-[#894d0d] focus:outline-none"
           >
-            EXPIRES
-            <SortIndicator active={sortBy === "expiredAt"} order={sortOrder} />
+            Expires
+            <ArrowUpDown className="size-3.5" />
           </button>
         </th>
-        <th className="px-4 align-middle font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
+        <th
+          scope="col"
+          className="hidden px-4 py-3.5 align-middle lg:table-cell"
+        >
           <button
             type="button"
             onClick={() => onRequestSort("updatedAt")}
-            className={cn(
-              "inline-flex items-center rounded-sm outline-none focus-visible:ring-2 focus-visible:ring-[#894d0d]/40",
-              sortBy === "updatedAt" && "text-[#894d0d]",
-            )}
+            className="inline-flex items-center gap-1 hover:text-[#894d0d] focus:outline-none"
           >
-            UPDATED
-            <SortIndicator active={sortBy === "updatedAt"} order={sortOrder} />
+            Updated
+            <ArrowUpDown className="size-3.5" />
           </button>
         </th>
-        <th className="w-24 px-4 align-middle text-end font-ochre-ui text-[10px] font-semibold uppercase tracking-wider text-[#524439]/80">
-          ACTIONS
+        <th scope="col" className="px-4 py-3.5 text-right align-middle">
+          Actions
         </th>
       </tr>
     </thead>
