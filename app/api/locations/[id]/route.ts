@@ -9,7 +9,10 @@ import {
   handleError,
   printConsoleError,
 } from "@/shared/lib/error-handlers/handleError";
-import { canManageLocation } from "@/shared/lib/validations/user-access-validation";
+import {
+  canManageLocation,
+  canViewLocation,
+} from "@/shared/lib/validations/user-access-validation";
 import sessionValidation from "@/shared/lib/validations/user-session-validation";
 import {
   locationGetByIdSchema,
@@ -23,8 +26,8 @@ export async function GET(
   try {
     const session = await sessionValidation();
 
-    if (!canManageLocation(session.role))
-      throw forbidden("You're not allowed to access this feature");
+    if (!canViewLocation(session.role))
+      throw badRequest("You're not allowed to access this feature");
 
     const { id: locationId } = await params;
 

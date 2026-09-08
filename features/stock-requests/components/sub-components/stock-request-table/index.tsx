@@ -224,7 +224,7 @@ export default function StockRequestTable({
             ) : (
               stockRequests.map((request, idx) => (
                 <TableRow
-                  key={request.id}
+                  key={`${request.id} + ${idx}`}
                   stockRequest={request}
                   index={idx}
                   onInfo={onInfo}

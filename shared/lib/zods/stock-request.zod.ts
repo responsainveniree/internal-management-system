@@ -72,7 +72,8 @@ export const stockRequestUpdateSchema = z
     if (requiredSourceLocationTypes.includes(val.type) && !val.stockId) {
       ctx.addIssue({
         code: "custom",
-        message: "Source location is required for this type of stock request",
+        path: ["stockId"],
+        message: `Stock is required for '${val.type} type' of stock request`,
       });
     }
   });

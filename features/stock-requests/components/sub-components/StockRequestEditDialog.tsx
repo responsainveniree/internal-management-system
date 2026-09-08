@@ -60,10 +60,10 @@ export default function StockRequestEditDialog({
       stockRequestUpdateSchema,
     ) as Resolver<StockRequestUpdateSchema>,
     defaultValues: {
-      type: "ISSUE",
-      requestedQuantity: 1,
+      type: stockRequest?.type,
+      requestedQuantity: stockRequest?.requestedQuantity,
       stockId: undefined,
-      destinationLocationId: "",
+      destinationLocationId: stockRequest?.destinationLocationId ?? "",
     },
   });
 
@@ -87,8 +87,11 @@ export default function StockRequestEditDialog({
 
   if (!stockRequest) return null;
 
+  console.log(form.formState.errors);
+
   const onSubmit = form.handleSubmit(async (values) => {
     try {
+      console.log(stockRequest);
       await updateMutation.mutateAsync({
         id: stockRequest.id,
         payload: values,
@@ -144,7 +147,7 @@ export default function StockRequestEditDialog({
                 onSelect={(stock) => {
                   form.setValue("stockId", stock.id, { shouldValidate: true });
                   setSelectedStockLabel(
-                    `${stock.location?.name ?? "Location"} - Ready (${stock.quantity} available)`,
+                    `${stock.location?.name ?? "Location"} - ${stock.type} (${stock.quantity} available)`,
                   );
                 }}
               >

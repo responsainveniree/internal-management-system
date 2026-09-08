@@ -9,7 +9,10 @@ import {
   handleError,
   printConsoleError,
 } from "@/shared/lib/error-handlers/handleError";
-import { canManageItem } from "@/shared/lib/validations/user-access-validation";
+import {
+  canManageItem,
+  canViewItem,
+} from "@/shared/lib/validations/user-access-validation";
 import sessionValidation from "@/shared/lib/validations/user-session-validation";
 import {
   itemCreateSchema,
@@ -50,7 +53,7 @@ export async function GET(request: Request) {
   try {
     const session = await sessionValidation();
 
-    if (!canManageItem(session.role)) {
+    if (!canViewItem(session.role)) {
       throw forbidden("You're not allowed to access this feature");
     }
 

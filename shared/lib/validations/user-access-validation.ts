@@ -1,9 +1,33 @@
 import { Role } from "@prisma/client";
 
 const PERMISSIONS = {
+  CAN_VIEW_LOCATION: [
+    "HOTEL_MANAGER",
+    "SUPERVISOR",
+    "HOUSEKEEPING",
+    "FRONT_DESK",
+    "ACCOUNTANT",
+    "ADMIN",
+  ] as Role[],
   MANAGE_LOCATION: ["HOTEL_MANAGER", "SUPERVISOR"] as Role[],
   MANAGE_CATEGORY: ["HOTEL_MANAGER", "SUPERVISOR"] as Role[],
+  CAN_VIEW_ITEM: [
+    "HOTEL_MANAGER",
+    "SUPERVISOR",
+    "HOUSEKEEPING",
+    "FRONT_DESK",
+    "ACCOUNTANT",
+    "ADMIN",
+  ] as Role[],
   MANAGE_ITEM: ["HOTEL_MANAGER", "SUPERVISOR"] as Role[],
+  CAN_VIEW_STOCK: [
+    "HOTEL_MANAGER",
+    "SUPERVISOR",
+    "HOUSEKEEPING",
+    "FRONT_DESK",
+    "ACCOUNTANT",
+    "ADMIN",
+  ] as Role[],
   MANAGE_STOCK: ["HOTEL_MANAGER", "SUPERVISOR"] as Role[],
   MANAGE_STOCK_MOVEMENT: ["HOTEL_MANAGER", "SUPERVISOR"] as Role[],
   MANAGER_LAUNDRY: ["HOTEL_MANAGER", "SUPERVISOR"] as Role[],
@@ -20,6 +44,10 @@ const PERMISSIONS = {
   DELETE_OWN_STOCK_REQUESTS: ["HOUSEKEEPING", "FRONT_DESK"] as Role[],
 };
 
+export const canViewLocation = (role: Role) => {
+  return PERMISSIONS.CAN_VIEW_LOCATION.includes(role);
+};
+
 export const canManageLocation = (role: Role) => {
   return PERMISSIONS.MANAGE_LOCATION.includes(role);
 };
@@ -28,8 +56,15 @@ export const canManageCategory = (role: Role) => {
   return PERMISSIONS.MANAGE_CATEGORY.includes(role);
 };
 
+export const canViewItem = (role: Role) => {
+  return PERMISSIONS.CAN_VIEW_ITEM.includes(role);
+};
 export const canManageItem = (role: Role) => {
   return PERMISSIONS.MANAGE_ITEM.includes(role);
+};
+
+export const canViewStock = (role: Role) => {
+  return PERMISSIONS.CAN_VIEW_STOCK.includes(role);
 };
 
 export const canManageStock = (role: Role) => {

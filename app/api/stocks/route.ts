@@ -9,7 +9,10 @@ import {
   handleError,
   printConsoleError,
 } from "@/shared/lib/error-handlers/handleError";
-import { canManageStock } from "@/shared/lib/validations/user-access-validation";
+import {
+  canManageStock,
+  canViewStock,
+} from "@/shared/lib/validations/user-access-validation";
 import sessionValidation from "@/shared/lib/validations/user-session-validation";
 import {
   stockCreateSchema,
@@ -48,7 +51,7 @@ export async function GET(req: Request) {
   try {
     const session = await sessionValidation();
 
-    if (!canManageStock(session.role)) {
+    if (!canViewStock(session.role)) {
       throw forbidden("You're not allowed to access this feature");
     }
 
