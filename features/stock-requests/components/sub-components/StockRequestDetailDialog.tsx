@@ -4,7 +4,7 @@ import { formatTimestamp, cn } from "@/shared/lib/utils";
 import {
   Dialog,
   DialogContent,
-  DialogDescription,
+  // DialogDescription,
   DialogHeader,
   DialogTitle,
 } from "@/shared/components/ui/dialog";
@@ -57,9 +57,9 @@ export default function StockRequestDetailDialog({
               {statusBadge.label}
             </span>
           </div>
-          <DialogDescription className="font-ochre-ui text-xs text-[#524439]/80 pt-1">
+          {/* <DialogDescription className="font-ochre-ui text-xs text-[#524439]/80 pt-1">
             Complete details and review log for request ID: {stockRequest.id}
-          </DialogDescription>
+          </DialogDescription> */}
         </DialogHeader>
 
         <div className="space-y-4 py-2 font-ochre-ui text-xs text-[#524439]">

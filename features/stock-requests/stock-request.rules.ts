@@ -94,8 +94,14 @@ export function assertCanUpdateStockRequest(
 
 export function assertCanDeleteStockRequest(
   session: Session["user"],
-  stockRequest: { requestedById: string },
+  stockRequest: { requestedById: string; status: string },
 ): void {
+  if (!stockRequest) throw badRequest("Stock request not found.");
+
+  if (stockRequest.status !== "PENDING") {
+    throw badRequest("Can't delete a stock request that has been reviewed");
+  }
+
   // If the user has global delete permission, allow execution
   if (canDeleteAllStockRequest(session.role)) {
     return;

@@ -35,8 +35,6 @@ export async function sendPushToUser(
     prisma,
   );
 
-  console.log("subs: ", subscriptions);
-
   await Promise.all(
     subscriptions.map(async (sub) => {
       try {

@@ -17,6 +17,7 @@ import { StockRequestFilterSchema } from "@/shared/lib/zods/stock-request.zod";
 import { SearchLocationPopover } from "@/shared/components/search-components";
 import { StockRequestStatus, StockRequestType } from "@prisma/client";
 import { LocationOption } from "@/features/locations/location.types";
+import { useState } from "react";
 
 export type StockRequestTableFilters = {
   searchQuery: string;
@@ -68,13 +69,6 @@ export default function StockRequestTable({
 }: StockRequestTableProps) {
   const [locationSearchOpen, setLocationSearchOpen] = useState(false);
   const [selectedLocationName, setSelectedLocationName] = useState("");
-
-  const totalPages = Math.max(1, Math.ceil(totalStockRequests / dataPerPage));
-  const hasNextPage = page < totalPages;
-  const hasPrevPage = page > 1;
-  const rangeStart =
-    stockRequests.length === 0 ? 0 : (page - 1) * dataPerPage + 1;
-  const rangeEnd = Math.min(page * dataPerPage, totalStockRequests);
 
   const currentLocationLabel =
     filters.destinationLocationId === "ALL" || !filters.destinationLocationId

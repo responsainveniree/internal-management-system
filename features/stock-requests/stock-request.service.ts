@@ -395,9 +395,10 @@ const stockRequestService = {
       prisma,
     );
 
-    if (!stockRequest) throw badRequest("Stock request not found.");
-
-    assertCanDeleteStockRequest(session, stockRequest);
+    assertCanDeleteStockRequest(session, {
+      requestedById: stockRequest?.requestedById || "",
+      status: stockRequest?.status || "",
+    });
 
     const transaction = await prisma.$transaction(async (tx) => {
       const deletedStockRequest = await stockRequestRepository.delete(

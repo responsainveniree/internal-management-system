@@ -15,6 +15,7 @@ import TableHeader from "./TableHeader";
 import TableRow from "./TableRow";
 import { LaundryGetManySchema } from "@/shared/lib/zods/laundry.zod";
 import { SearchLocationPopover } from "@/shared/components/search-components";
+import { useState } from "react";
 
 export type LaundryTableFilters = {
   searchQuery: string;
@@ -61,12 +62,6 @@ export default function LaundryTable({
 }: LaundryTableProps) {
   const [locationSearchOpen, setLocationSearchOpen] = useState(false);
   const [selectedLocationName, setSelectedLocationName] = useState("");
-
-  const totalPages = Math.max(1, Math.ceil(totalLaundries / dataPerPage));
-  const hasNextPage = page < totalPages;
-  const hasPrevPage = page > 1;
-  const rangeStart = laundries.length === 0 ? 0 : (page - 1) * dataPerPage + 1;
-  const rangeEnd = Math.min(page * dataPerPage, totalLaundries);
 
   const currentLocationLabel =
     filters.sourceLocationId === "ALL"

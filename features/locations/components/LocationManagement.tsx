@@ -6,7 +6,6 @@ import { Plus } from "lucide-react";
 import { LocationType } from "@prisma/client";
 import { useLocations } from "@/features/locations/location.hooks";
 import type { LocationListItem } from "@/features/locations/location.types";
-import { LOCATION_TYPE_OPTIONS } from "@/features/locations/location.utils";
 import { cn } from "@/shared/lib/utils";
 import LocationInfoPanel from "./sub-components/location-table/LocationInfoPanel";
 import LocationFormDialog from "./sub-components/LocationFormDialog";

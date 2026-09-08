@@ -80,11 +80,13 @@ export default function LocationTable({
         <div className="flex flex-wrap items-center gap-2">
           <Select
             value={filters.locationType ?? "ALL"}
-            onValueChange={(val) =>
-              onFiltersChange({
+            onValueChange={(val) => {
+              if (val === null) return;
+
+              return onFiltersChange({
                 locationType: val === "ALL" ? undefined : val,
-              })
-            }
+              });
+            }}
           >
             <SelectTrigger className="h-10 min-w-40 rounded-lg border-[#e5eeff] bg-[#f8f9ff]/80 font-ochre-ui text-sm focus:border-[#894d0d]/35 focus:ring-2 focus:ring-[#894d0d]/15">
               <SelectValue placeholder="Type: All">
