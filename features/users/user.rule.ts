@@ -41,11 +41,11 @@ export const assertCanRequestEmailOtp = (
   }
 };
 
-export const assertCanVerifyEmail = (
+export function assertCanVerifyEmail(
   user: Partial<User>,
   emailOtpVerification: Partial<EmailOtpVerification> | null,
   now: Date,
-) => {
+): asserts user {
   if (!user) throw notFound("User not found");
   if (user.emailVerified) throw badRequest("Email has already been verified");
   if (!emailOtpVerification || !user.EmailOtpVerification) {
@@ -75,7 +75,7 @@ export const assertCanVerifyEmail = (
       );
     }
   }
-};
+}
 
 export function assertCanRequestResetPasswordOtp(
   user: {

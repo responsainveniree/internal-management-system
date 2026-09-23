@@ -74,11 +74,19 @@ export const userVerifyResetPasswordSchema = z
       ctx.addIssue({
         code: "invalid_value" as any,
         path: ["confirmPassword"],
-        message: "password and confirm password are different",
+        message: "password and confirm password are different", 
       });
     }
   });
 
 export type UserVerifyResetPasswordSchema = z.infer<
   typeof userVerifyResetPasswordSchema
+>;
+
+export const userUpdateschema = z.object({
+  name: z.string().trim().min(3),
+});
+
+export type UserUpdateSchema = z.infer<
+  typeof userUpdateschema
 >;

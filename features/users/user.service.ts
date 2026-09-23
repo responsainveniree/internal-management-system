@@ -2,6 +2,7 @@ import {
   UserCreateSchema,
   UserRequestEmailOtpSchema,
   UserRequestResetPasswordSchema,
+  UserUpdateSchema,
   UserVerifyEmailSchema,
   UserVerifyResetPasswordSchema,
 } from "@/shared/lib/zods/user.zod";
@@ -113,6 +114,25 @@ export const userService = {
         "Account created successfully. Next step is to verify your account. Check your email, please!",
       userId: transaction.user.id,
       emailVerificationId: transaction.emailVerificationId,
+    };
+  },
+
+  update: async (
+    session: Session["user"],
+    data: UserUpdateSchema,
+    prisma: PrismaClient | Prisma.TransactionClient,
+  ) => {
+    const updatedUser = await userRepository.update(
+      session.id,
+      {
+        name: data.name,
+      },
+      prisma,
+    );
+
+    return {
+      message: "User updated successfully",
+      userId: updatedUser.id,
     };
   },
 
@@ -338,7 +358,7 @@ export const userService = {
         );
 
         await emailVerificationRepository.deleteById(
-          user!.EmailOtpVerification!.id,
+          user.EmailOtpVerification!.id,
           tx,
         );
       });

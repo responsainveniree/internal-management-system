@@ -27,3 +27,7 @@ export type UserVerifyPasswordApiResponse = ApiResponse<{
   userId: string;
   success: boolean;
 }>;
+
+export type UserUpdateApiResponse = ApiResponse<{
+  userId: string;
+}>;
